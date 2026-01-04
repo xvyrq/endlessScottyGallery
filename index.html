@@ -27,12 +27,75 @@
       padding: 20px 40px;
       z-index: 1000;
       border-bottom: 1px solid #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
     }
 
     nav h1 {
       font-size: 24px;
       font-weight: 600;
       letter-spacing: 0.5px;
+    }
+
+    .nav-left {
+      flex: 1;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #1a1a1a;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover {
+      background: #252525;
+      border-color: #444;
+      transform: translateY(-2px);
+    }
+
+    .control-btn.active {
+      background: #252525;
+      border-color: #FFDD00;
+    }
+
+    .search-input {
+      width: 140px;
+      height: 40px;
+      padding: 0 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #FFDD00;
+      background: #252525;
+    }
+
+    .search-input::placeholder {
+      color: #666;
     }
 
     /* Gallery Grid */
@@ -57,10 +120,32 @@
 
       nav {
         padding: 15px 20px;
+        flex-wrap: wrap;
       }
 
       nav h1 {
         font-size: 18px;
+      }
+
+      .nav-left {
+        flex: 0 0 100%;
+        margin-bottom: 10px;
+      }
+
+      .nav-center {
+        flex: 1;
+      }
+
+      .control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      .search-input {
+        width: 120px;
+        height: 36px;
+        font-size: 12px;
       }
     }
 
@@ -173,8 +258,21 @@
 </head>
 <body>
   <nav>
-    <h1>Endless Scotty Gallery</h1>
-    <div id="counter" style="font-size: 14px; color: #666; margin-top: 4px;">Loading...</div>
+    <div class="nav-left">
+      <h1>Endless Scotty Gallery</h1>
+      <div id="counter" style="font-size: 14px; color: #666; margin-top: 4px;">Loading...</div>
+    </div>
+    <div class="nav-center">
+      <input 
+        type="text" 
+        class="search-input" 
+        id="coaSearch" 
+        placeholder="Search COA #"
+        maxlength="7"
+      >
+      <button class="control-btn" id="randomBtn" title="Random order">🎲</button>
+      <button class="control-btn" id="sequentialBtn" title="Sequential order">🔢</button>
+    </div>
   </nav>
 
   <div class="gallery" id="gallery"></div>
@@ -298,24 +396,149 @@
     });
 
     // State
-    let shuffledCOAs = generateShuffledCOAs();
+    let allCOAs = [];
+    let shuffledCOAs = [];
     let currentIndex = 0;
     let isLoading = false;
     let loadedCount = 0;
     let attemptedCount = 0;
+    let viewMode = 'random'; // 'random', 'sequential', or 'search'
+    let searchCOA = null;
 
     const gallery = document.getElementById('gallery');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const counter = document.getElementById('counter');
+    const coaSearch = document.getElementById('coaSearch');
+    const randomBtn = document.getElementById('randomBtn');
+    const sequentialBtn = document.getElementById('sequentialBtn');
     
     // Update counter
     function updateCounter() {
-      counter.textContent = `${loadedCount.toLocaleString()} putters loaded • ${attemptedCount.toLocaleString()} checked`;
+      if (viewMode === 'search' && searchCOA) {
+        counter.textContent = `Viewing ${searchCOA}`;
+      } else {
+        counter.textContent = `${loadedCount.toLocaleString()} putters loaded • ${attemptedCount.toLocaleString()} checked`;
+      }
+    }
+
+    // Clear gallery
+    function clearGallery() {
+      gallery.innerHTML = '';
+      currentIndex = 0;
+      loadedCount = 0;
+      attemptedCount = 0;
+      updateCounter();
+    }
+
+    // Switch to random mode
+    function switchToRandom() {
+      viewMode = 'random';
+      shuffledCOAs = generateShuffledCOAs();
+      randomBtn.classList.add('active');
+      sequentialBtn.classList.remove('active');
+      loadingIndicator.style.display = 'block';
+      clearGallery();
+      loadMorePutters();
+    }
+
+    // Switch to sequential mode
+    function switchToSequential() {
+      viewMode = 'sequential';
+      allCOAs = [];
+      for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) {
+        allCOAs.push(i);
+      }
+      shuffledCOAs = allCOAs;
+      randomBtn.classList.remove('active');
+      sequentialBtn.classList.add('active');
+      loadingIndicator.style.display = 'block';
+      clearGallery();
+      loadMorePutters();
+    }
+
+    // Search for specific COA
+    function searchForCOA(coaInput) {
+      // Clean input - remove spaces, convert to uppercase
+      let cleaned = coaInput.trim().toUpperCase();
+      
+      // Add 'A' prefix if missing
+      if (!cleaned.startsWith('A')) {
+        cleaned = 'A' + cleaned;
+      }
+      
+      // Pad with zeros if needed (e.g., A123 -> A000123)
+      const match = cleaned.match(/^A(\d+)$/);
+      if (match) {
+        const num = parseInt(match[1]);
+        if (num >= COA_RANGE.start && num <= COA_RANGE.end) {
+          searchCOA = formatCOA(num);
+          viewMode = 'search';
+          randomBtn.classList.remove('active');
+          sequentialBtn.classList.remove('active');
+          loadingIndicator.style.display = 'none';
+          clearGallery();
+          
+          // Show all image variants (a, b, c) for this COA
+          IMAGE_VARIANTS.forEach(variant => {
+            const card = createPutterCardWithVariant(num, variant);
+            gallery.appendChild(card);
+            const img = card.querySelector('img');
+            imageObserver.observe(img);
+          });
+          
+          updateCounter();
+          return true;
+        }
+      }
+      
+      // Invalid COA
+      alert('Please enter a valid COA number (A000001 - A074674)');
+      return false;
+    }
+
+    // Create putter card with specific variant
+    function createPutterCardWithVariant(coaNum, variant) {
+      const coaNumber = formatCOA(coaNum);
+      
+      const card = document.createElement('div');
+      card.className = 'putter-card';
+      card.onclick = () => window.open(getDetailsURL(coaNumber), '_blank');
+      
+      const img = document.createElement('img');
+      img.dataset.src = getImageURL(coaNumber, variant);
+      img.alt = `Scotty Cameron ${coaNumber} - ${variant.toUpperCase()}`;
+      
+      // Handle image load
+      img.onload = () => {
+        img.classList.add('loaded');
+        loadedCount++;
+        updateCounter();
+      };
+      
+      // Handle image error - just hide this variant
+      img.onerror = () => {
+        card.classList.add('error');
+        attemptedCount++;
+        updateCounter();
+      };
+      
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton';
+      
+      const badge = document.createElement('div');
+      badge.className = 'coa-badge';
+      badge.textContent = `${coaNumber} (${variant.toUpperCase()})`;
+      
+      card.appendChild(img);
+      card.appendChild(skeleton);
+      card.appendChild(badge);
+      
+      return card;
     }
 
     // Load batch of putters
     function loadMorePutters() {
-      if (currentIndex >= shuffledCOAs.length) {
+      if (viewMode === 'search' || currentIndex >= shuffledCOAs.length) {
         loadingIndicator.style.display = 'none';
         return;
       }
@@ -339,6 +562,9 @@
 
     // Initialize
     function init() {
+      // Generate initial random order
+      shuffledCOAs = generateShuffledCOAs();
+      
       // Load initial batch
       loadMorePutters();
       
@@ -351,6 +577,22 @@
           loadMorePutters();
         }
       }, 500);
+
+      // Event listeners
+      randomBtn.addEventListener('click', switchToRandom);
+      sequentialBtn.addEventListener('click', switchToSequential);
+      
+      coaSearch.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          searchForCOA(coaSearch.value);
+        }
+      });
+
+      coaSearch.addEventListener('input', (e) => {
+        // Auto-format as user types
+        let value = e.target.value.toUpperCase();
+        e.target.value = value;
+      });
     }
 
     // Start the gallery
