@@ -120,7 +120,8 @@
 
       nav {
         padding: 15px 20px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 0;
       }
 
       nav h1 {
@@ -128,12 +129,39 @@
       }
 
       .nav-left {
-        flex: 0 0 100%;
-        margin-bottom: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-left > div:first-child {
+        flex: 1;
+      }
+
+      #counter {
+        margin-top: 2px !important;
       }
 
       .nav-center {
-        flex: 1;
+        width: 100%;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .nav-center.expanded {
+        display: flex;
+      }
+
+      /* Hide desktop buttons on mobile */
+      .nav-center #randomBtn,
+      .nav-center #sequentialBtn {
+        display: none;
+      }
+
+      .mobile-controls {
+        display: flex;
+        gap: 8px;
       }
 
       .control-btn {
@@ -143,9 +171,27 @@
       }
 
       .search-input {
-        width: 120px;
+        width: 100%;
         height: 36px;
         font-size: 12px;
+      }
+
+      #searchToggleBtn {
+        display: flex !important;
+      }
+    }
+
+    @media (min-width: 769px) {
+      #searchToggleBtn {
+        display: none !important;
+      }
+      
+      .mobile-controls {
+        display: none;
+      }
+      
+      .nav-center {
+        display: flex !important;
       }
     }
 
@@ -259,16 +305,23 @@
 <body>
   <nav>
     <div class="nav-left">
-      <h1>Endless Scotty Gallery</h1>
-      <h5>Created by @endlessloop on Discord</h5>
-      <div id="counter" style="font-size: 14px; color: #666; margin-top: 4px;">Loading...</div>
+      <div>
+        <h1>Endless Scotty Gallery</h1>
+        <h5>Created by @endlessloop</h5>
+        <div id="counter" style="font-size: 14px; color: #666; margin-top: 4px;">Loading...</div>
+      </div>
+      <div class="mobile-controls">
+        <button class="control-btn" id="searchToggleBtn" title="Search">🔍</button>
+        <button class="control-btn" id="randomBtnMobile" title="Random order">🎲</button>
+        <button class="control-btn" id="sequentialBtnMobile" title="Sequential order">🔢</button>
+      </div>
     </div>
-    <div class="nav-center">
+    <div class="nav-center" id="navCenter">
       <input 
         type="text" 
         class="search-input" 
         id="coaSearch" 
-        placeholder="Search COA #"
+        placeholder="Search COA # (e.g. A034430)"
         maxlength="7"
       >
       <button class="control-btn" id="randomBtn" title="Random order">🎲</button>
@@ -412,6 +465,10 @@
     const coaSearch = document.getElementById('coaSearch');
     const randomBtn = document.getElementById('randomBtn');
     const sequentialBtn = document.getElementById('sequentialBtn');
+    const randomBtnMobile = document.getElementById('randomBtnMobile');
+    const sequentialBtnMobile = document.getElementById('sequentialBtnMobile');
+    const searchToggleBtn = document.getElementById('searchToggleBtn');
+    const navCenter = document.getElementById('navCenter');
     
     // Update counter
     function updateCounter() {
@@ -437,6 +494,8 @@
       shuffledCOAs = generateShuffledCOAs();
       randomBtn.classList.add('active');
       sequentialBtn.classList.remove('active');
+      randomBtnMobile.classList.add('active');
+      sequentialBtnMobile.classList.remove('active');
       loadingIndicator.style.display = 'block';
       clearGallery();
       loadMorePutters();
@@ -452,6 +511,8 @@
       shuffledCOAs = allCOAs;
       randomBtn.classList.remove('active');
       sequentialBtn.classList.add('active');
+      randomBtnMobile.classList.remove('active');
+      sequentialBtnMobile.classList.add('active');
       loadingIndicator.style.display = 'block';
       clearGallery();
       loadMorePutters();
@@ -476,6 +537,8 @@
           viewMode = 'search';
           randomBtn.classList.remove('active');
           sequentialBtn.classList.remove('active');
+          randomBtnMobile.classList.remove('active');
+          sequentialBtnMobile.classList.remove('active');
           loadingIndicator.style.display = 'none';
           clearGallery();
           
@@ -582,10 +645,22 @@
       // Event listeners
       randomBtn.addEventListener('click', switchToRandom);
       sequentialBtn.addEventListener('click', switchToSequential);
+      randomBtnMobile.addEventListener('click', switchToRandom);
+      sequentialBtnMobile.addEventListener('click', switchToSequential);
+      
+      searchToggleBtn.addEventListener('click', () => {
+        navCenter.classList.toggle('expanded');
+        if (navCenter.classList.contains('expanded')) {
+          coaSearch.focus();
+        }
+      });
       
       coaSearch.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          searchForCOA(coaSearch.value);
+          if (searchForCOA(coaSearch.value)) {
+            // Collapse search on mobile after successful search
+            navCenter.classList.remove('expanded');
+          }
         }
       });
 
