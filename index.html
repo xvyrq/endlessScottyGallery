@@ -336,17 +336,28 @@
   </div>
 
   <script>
-    // Configuration
-    const COA_RANGE = { start: 1, end: 85000 };
+    // Configuration - Two separate ranges
+    const COA_RANGES = [
+      { start: 1, end: 78000 },
+      { start: 84437, end: 84437 }
+    ];
     const BATCH_SIZE = 60;
     const IMAGE_VARIANTS = ['a', 'b', 'c'];
     
+    // Generate array of all valid COA numbers
+    function generateAllCOAs() {
+      const coas = [];
+      COA_RANGES.forEach(range => {
+        for (let i = range.start; i <= range.end; i++) {
+          coas.push(i);
+        }
+      });
+      return coas;
+    }
+    
     // Generate shuffled array of COA numbers
     function generateShuffledCOAs() {
-      const coas = [];
-      for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) {
-        coas.push(i);
-      }
+      const coas = generateAllCOAs();
       
       // Fisher-Yates shuffle
       for (let i = coas.length - 1; i > 0; i--) {
@@ -355,6 +366,11 @@
       }
       
       return coas;
+    }
+
+    // Check if a COA number is valid
+    function isValidCOA(num) {
+      return COA_RANGES.some(range => num >= range.start && num <= range.end);
     }
 
     // Format COA number
@@ -507,11 +523,7 @@
     // Switch to sequential mode
     function switchToSequential() {
       viewMode = 'sequential';
-      allCOAs = [];
-      for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) {
-        allCOAs.push(i);
-      }
-      shuffledCOAs = allCOAs;
+      shuffledCOAs = generateAllCOAs();
       randomBtn.classList.remove('active');
       sequentialBtn.classList.add('active');
       newestBtn.classList.remove('active');
@@ -526,11 +538,7 @@
     // Switch to newest first mode (reverse sequential)
     function switchToNewest() {
       viewMode = 'newest';
-      allCOAs = [];
-      for (let i = COA_RANGE.end; i >= COA_RANGE.start; i--) {
-        allCOAs.push(i);
-      }
-      shuffledCOAs = allCOAs;
+      shuffledCOAs = generateAllCOAs().reverse();
       randomBtn.classList.remove('active');
       sequentialBtn.classList.remove('active');
       newestBtn.classList.add('active');
@@ -556,7 +564,7 @@
       const match = cleaned.match(/^A(\d+)$/);
       if (match) {
         const num = parseInt(match[1]);
-        if (num >= COA_RANGE.start && num <= COA_RANGE.end) {
+        if (isValidCOA(num)) {
           searchCOA = formatCOA(num);
           viewMode = 'search';
           randomBtn.classList.remove('active');
@@ -582,7 +590,7 @@
       }
       
       // Invalid COA
-      alert('Please enter a valid COA number (A000001 - A085000)');
+      alert('Please enter a valid COA number (A000001 - A078000 or A084437)');
       return false;
     }
 
