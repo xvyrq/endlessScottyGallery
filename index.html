@@ -155,7 +155,8 @@
 
       /* Hide desktop buttons on mobile */
       .nav-center #randomBtn,
-      .nav-center #sequentialBtn {
+      .nav-center #sequentialBtn,
+      .nav-center #newestBtn {
         display: none;
       }
 
@@ -310,6 +311,7 @@
         <button class="control-btn" id="searchToggleBtn" title="Search">🔍</button>
         <button class="control-btn" id="randomBtnMobile" title="Random order">🎲</button>
         <button class="control-btn" id="sequentialBtnMobile" title="Sequential order">🔢</button>
+        <button class="control-btn" id="newestBtnMobile" title="Newest first">🆕</button>
       </div>
     </div>
     <div class="nav-center" id="navCenter">
@@ -322,6 +324,7 @@
       >
       <button class="control-btn" id="randomBtn" title="Random order">🎲</button>
       <button class="control-btn" id="sequentialBtn" title="Sequential order">🔢</button>
+      <button class="control-btn" id="newestBtn" title="Newest first">🆕</button>
     </div>
   </nav>
 
@@ -452,7 +455,7 @@
     let isLoading = false;
     let loadedCount = 0;
     let attemptedCount = 0;
-    let viewMode = 'random'; // 'random', 'sequential', or 'search'
+    let viewMode = 'random'; // 'random', 'sequential', 'newest', or 'search'
     let searchCOA = null;
 
     const gallery = document.getElementById('gallery');
@@ -461,8 +464,10 @@
     const coaSearch = document.getElementById('coaSearch');
     const randomBtn = document.getElementById('randomBtn');
     const sequentialBtn = document.getElementById('sequentialBtn');
+    const newestBtn = document.getElementById('newestBtn');
     const randomBtnMobile = document.getElementById('randomBtnMobile');
     const sequentialBtnMobile = document.getElementById('sequentialBtnMobile');
+    const newestBtnMobile = document.getElementById('newestBtnMobile');
     const searchToggleBtn = document.getElementById('searchToggleBtn');
     const navCenter = document.getElementById('navCenter');
     
@@ -490,8 +495,10 @@
       shuffledCOAs = generateShuffledCOAs();
       randomBtn.classList.add('active');
       sequentialBtn.classList.remove('active');
+      newestBtn.classList.remove('active');
       randomBtnMobile.classList.add('active');
       sequentialBtnMobile.classList.remove('active');
+      newestBtnMobile.classList.remove('active');
       loadingIndicator.style.display = 'block';
       clearGallery();
       loadMorePutters();
@@ -507,8 +514,29 @@
       shuffledCOAs = allCOAs;
       randomBtn.classList.remove('active');
       sequentialBtn.classList.add('active');
+      newestBtn.classList.remove('active');
       randomBtnMobile.classList.remove('active');
       sequentialBtnMobile.classList.add('active');
+      newestBtnMobile.classList.remove('active');
+      loadingIndicator.style.display = 'block';
+      clearGallery();
+      loadMorePutters();
+    }
+
+    // Switch to newest first mode (reverse sequential)
+    function switchToNewest() {
+      viewMode = 'newest';
+      allCOAs = [];
+      for (let i = COA_RANGE.end; i >= COA_RANGE.start; i--) {
+        allCOAs.push(i);
+      }
+      shuffledCOAs = allCOAs;
+      randomBtn.classList.remove('active');
+      sequentialBtn.classList.remove('active');
+      newestBtn.classList.add('active');
+      randomBtnMobile.classList.remove('active');
+      sequentialBtnMobile.classList.remove('active');
+      newestBtnMobile.classList.add('active');
       loadingIndicator.style.display = 'block';
       clearGallery();
       loadMorePutters();
@@ -533,8 +561,10 @@
           viewMode = 'search';
           randomBtn.classList.remove('active');
           sequentialBtn.classList.remove('active');
+          newestBtn.classList.remove('active');
           randomBtnMobile.classList.remove('active');
           sequentialBtnMobile.classList.remove('active');
+          newestBtnMobile.classList.remove('active');
           loadingIndicator.style.display = 'none';
           clearGallery();
           
@@ -552,7 +582,7 @@
       }
       
       // Invalid COA
-      alert('Please enter a valid COA number (A000001 - A074674)');
+      alert('Please enter a valid COA number (A000001 - A085000)');
       return false;
     }
 
@@ -641,8 +671,10 @@
       // Event listeners
       randomBtn.addEventListener('click', switchToRandom);
       sequentialBtn.addEventListener('click', switchToSequential);
+      newestBtn.addEventListener('click', switchToNewest);
       randomBtnMobile.addEventListener('click', switchToRandom);
       sequentialBtnMobile.addEventListener('click', switchToSequential);
+      newestBtnMobile.addEventListener('click', switchToNewest);
       
       searchToggleBtn.addEventListener('click', () => {
         navCenter.classList.toggle('expanded');
