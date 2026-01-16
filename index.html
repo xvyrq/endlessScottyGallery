@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Endless Scotty Gallery</title>
+
   <style>
     * {
       margin: 0;
@@ -36,12 +37,9 @@
     nav h1 {
       font-size: 24px;
       font-weight: 600;
-      letter-spacing: 0.5px;
     }
 
-    .nav-left {
-      flex: 1;
-    }
+    .nav-left { flex: 1; }
 
     .nav-center {
       display: flex;
@@ -50,29 +48,23 @@
     }
 
     .control-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 40px;
       height: 40px;
       background: #1a1a1a;
-      color: #fff;
-      text-decoration: none;
       border: 1px solid #333;
       border-radius: 8px;
+      color: #fff;
       font-size: 18px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all .2s ease;
     }
 
     .control-btn:hover {
       background: #252525;
-      border-color: #444;
       transform: translateY(-2px);
     }
 
     .control-btn.active {
-      background: #252525;
       border-color: #FFDD00;
     }
 
@@ -84,21 +76,14 @@
       border: 1px solid #333;
       border-radius: 8px;
       color: #fff;
-      font-size: 13px;
-      transition: all 0.2s ease;
     }
 
     .search-input:focus {
       outline: none;
       border-color: #FFDD00;
-      background: #252525;
     }
 
-    .search-input::placeholder {
-      color: #666;
-    }
-
-    /* Gallery Grid */
+    /* Gallery */
     .gallery {
       margin-top: 80px;
       padding: 20px;
@@ -106,96 +91,10 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
       max-width: 1800px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
     }
 
-    @media (max-width: 768px) {
-      .gallery {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 12px;
-        padding: 12px;
-        margin-top: 70px;
-      }
-
-      nav {
-        padding: 15px 20px;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      nav h1 {
-        font-size: 18px;
-      }
-
-      .nav-left {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .nav-left > div:first-child {
-        flex: 1;
-      }
-
-      #counter {
-        margin-top: 2px !important;
-      }
-
-      .nav-center {
-        width: 100%;
-        margin-top: 10px;
-        display: none;
-      }
-
-      .nav-center.expanded {
-        display: flex;
-      }
-
-      /* Hide desktop buttons on mobile */
-      .nav-center #randomBtn,
-      .nav-center #sequentialBtn {
-        display: none;
-      }
-
-      .mobile-controls {
-        display: flex;
-        gap: 8px;
-      }
-
-      .control-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-      }
-
-      .search-input {
-        width: 100%;
-        height: 36px;
-        font-size: 12px;
-      }
-
-      #searchToggleBtn {
-        display: flex !important;
-      }
-    }
-
-    @media (min-width: 769px) {
-      #searchToggleBtn {
-        display: none !important;
-      }
-      
-      .mobile-controls {
-        display: none;
-      }
-      
-      .nav-center {
-        display: flex !important;
-      }
-    }
-
-    /* Putter Card */
+    /* Card */
     .putter-card {
       position: relative;
       aspect-ratio: 1;
@@ -203,12 +102,13 @@
       border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform .2s ease;
+      content-visibility: auto;
+      contain-intrinsic-size: 280px 280px;
     }
 
     .putter-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
 
     .putter-card img {
@@ -216,7 +116,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity .3s ease;
     }
 
     .putter-card img.loaded {
@@ -227,69 +127,49 @@
       display: none;
     }
 
-    /* Skeleton Loader */
+    /* Skeleton */
     .skeleton {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       background: linear-gradient(
         90deg,
-        #1a1a1a 0%,
-        #252525 50%,
-        #1a1a1a 100%
+        #1a1a1a,
+        #252525,
+        #1a1a1a
       );
       background-size: 200% 100%;
-      animation: loading 1.5s ease-in-out infinite;
-    }
-
-    .putter-card img.loaded ~ .skeleton,
-    .putter-card img.error ~ .skeleton {
-      display: none;
+      animation: loading 1.5s infinite;
     }
 
     @keyframes loading {
-      0% {
-        background-position: 200% 0;
-      }
-      100% {
-        background-position: -200% 0;
-      }
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    /* COA Badge */
     .coa-badge {
       position: absolute;
       bottom: 8px;
       left: 8px;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,.8);
       padding: 4px 10px;
-      border-radius: 4px;
       font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      opacity: 1;
-      transition: opacity 0.2s ease;
+      border-radius: 4px;
     }
 
-    /* Loading Indicator */
     .loading-more {
       text-align: center;
       padding: 40px;
       color: #666;
-      font-size: 14px;
     }
 
     .spinner {
-      display: inline-block;
       width: 20px;
       height: 20px;
       border: 2px solid #333;
       border-top-color: #666;
       border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+      animation: spin .6s linear infinite;
+      display: inline-block;
       margin-right: 8px;
     }
 
@@ -298,386 +178,143 @@
     }
   </style>
 </head>
+
 <body>
-  <nav>
-    <div class="nav-left">
-      <div>
-        <h1>Endless Scotty Gallery</h1>
-        <h5>Created by @endlessloop</h5>
-        <div id="counter" style="font-size: 14px; color: #666; margin-top: 4px;">Loading...</div>
-      </div>
-      <div class="mobile-controls">
-        <button class="control-btn" id="searchToggleBtn" title="Search">🔍</button>
-        <button class="control-btn" id="randomBtnMobile" title="Random order">🎲</button>
-        <button class="control-btn" id="sequentialBtnMobile" title="Sequential order">🔢</button>
-      </div>
-    </div>
-    <div class="nav-center" id="navCenter">
-      <input 
-        type="text" 
-        class="search-input" 
-        id="coaSearch" 
-        placeholder="Search COA # (e.g. A034430)"
-        maxlength="7"
-      >
-      <button class="control-btn" id="randomBtn" title="Random order">🎲</button>
-      <button class="control-btn" id="sequentialBtn" title="Sequential order">🔢</button>
-    </div>
-  </nav>
 
-  <div class="gallery" id="gallery"></div>
-
-  <div class="loading-more" id="loadingIndicator">
-    <span class="spinner"></span>
-    Loading more putters...
+<nav>
+  <div class="nav-left">
+    <h1>Endless Scotty Gallery</h1>
+    <div id="counter" style="font-size:14px;color:#666">Loading…</div>
   </div>
 
-  <script>
-    // Configuration
-    const COA_RANGE = { start: 1, end: 74674 };
-    const BATCH_SIZE = 60;
-    const IMAGE_VARIANTS = ['a', 'b', 'c'];
-    
-    // Generate shuffled array of COA numbers
-    function generateShuffledCOAs() {
-      const coas = [];
-      for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) {
-        coas.push(i);
-      }
-      
-      // Fisher-Yates shuffle
-      for (let i = coas.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [coas[i], coas[j]] = [coas[j], coas[i]];
-      }
-      
-      return coas;
-    }
+  <div class="nav-center">
+    <input id="coaSearch" class="search-input" placeholder="Search COA #" />
+    <button id="randomBtn" class="control-btn active">🎲</button>
+    <button id="sequentialBtn" class="control-btn">🔢</button>
+  </div>
+</nav>
 
-    // Format COA number
-    function formatCOA(num) {
-      return `A${String(num).padStart(6, '0')}`;
-    }
+<div id="gallery" class="gallery"></div>
 
-    // Generate image URL
-    function getImageURL(coaNumber, variant = 'a') {
-      return `https://media.scottycameron.com/images/authentication/putters/${coaNumber}${variant}.JPG`;
-    }
+<div id="loadingIndicator" class="loading-more">
+  <span class="spinner"></span>
+  Loading more putters…
+</div>
 
-    // Generate details page URL
-    function getDetailsURL(coaNumber) {
-      return `https://www.scottycameron.com/legacy-site/authentication/registry/Details.aspx?rn=${coaNumber}`;
-    }
+<script>
+  const COA_RANGE = { start: 1, end: 74674 };
+  const BATCH_SIZE = 60;
+  const IMAGE_VARIANTS = ['a']; // primary only (big win)
 
-    // Create putter card element
-    function createPutterCard(coaNum) {
-      const coaNumber = formatCOA(coaNum);
-      const variant = IMAGE_VARIANTS[Math.floor(Math.random() * IMAGE_VARIANTS.length)];
-      
-      const card = document.createElement('div');
-      card.className = 'putter-card';
-      card.onclick = () => window.open(getDetailsURL(coaNumber), '_blank');
-      
-      const img = document.createElement('img');
-      img.dataset.src = getImageURL(coaNumber, variant);
-      img.alt = `Scotty Cameron ${coaNumber}`;
-      
-      // Handle image load
-      img.onload = () => {
-        img.classList.add('loaded');
-        loadedCount++;
-        updateCounter();
-      };
-      
-      // Handle image error (try all variants, then hide card if all fail)
-      let currentVariantIndex = IMAGE_VARIANTS.indexOf(variant);
-      
-      img.onerror = () => {
-        currentVariantIndex++;
-        
-        if (currentVariantIndex < IMAGE_VARIANTS.length) {
-          // Try next variant
-          const nextVariant = IMAGE_VARIANTS[currentVariantIndex];
-          img.src = getImageURL(coaNumber, nextVariant);
-        } else {
-          // All variants failed, hide the card
-          card.classList.add('error');
-          attemptedCount++;
-          updateCounter();
-        }
-      };
-      
-      const skeleton = document.createElement('div');
-      skeleton.className = 'skeleton';
-      
-      const badge = document.createElement('div');
-      badge.className = 'coa-badge';
-      badge.textContent = coaNumber;
-      
-      card.appendChild(img);
-      card.appendChild(skeleton);
-      card.appendChild(badge);
-      
-      return card;
-    }
+  function formatCOA(num) {
+    return `A${String(num).padStart(6,'0')}`;
+  }
 
-    // Intersection Observer for lazy loading
-    const imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
-          imageObserver.unobserve(img);
-        }
-      });
-    }, {
-      rootMargin: '200px' // Start loading before image is visible
-    });
+  function getImageURL(coa, variant='a') {
+    const raw = `media.scottycameron.com/images/authentication/putters/${coa}${variant}.JPG`;
+    return `https://images.weserv.nl/?url=${raw}&w=800&output=webp&q=75`;
+  }
 
-    // Infinite scroll observer
-    const scrollObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !isLoading) {
-          loadMorePutters();
-        }
-      });
-    }, {
-      rootMargin: '400px'
-    });
+  function getDetailsURL(coa) {
+    return `https://www.scottycameron.com/legacy-site/authentication/registry/Details.aspx?rn=${coa}`;
+  }
 
-    // State
-    let allCOAs = [];
-    let shuffledCOAs = [];
-    let currentIndex = 0;
-    let isLoading = false;
-    let loadedCount = 0;
-    let attemptedCount = 0;
-    let viewMode = 'random'; // 'random', 'sequential', or 'search'
-    let searchCOA = null;
+  const gallery = document.getElementById('gallery');
+  const counter = document.getElementById('counter');
+  const loadingIndicator = document.getElementById('loadingIndicator');
 
-    const gallery = document.getElementById('gallery');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const counter = document.getElementById('counter');
-    const coaSearch = document.getElementById('coaSearch');
-    const randomBtn = document.getElementById('randomBtn');
-    const sequentialBtn = document.getElementById('sequentialBtn');
-    const randomBtnMobile = document.getElementById('randomBtnMobile');
-    const sequentialBtnMobile = document.getElementById('sequentialBtnMobile');
-    const searchToggleBtn = document.getElementById('searchToggleBtn');
-    const navCenter = document.getElementById('navCenter');
-    
-    // Update counter
-    function updateCounter() {
-      if (viewMode === 'search' && searchCOA) {
-        counter.textContent = `Viewing ${searchCOA}`;
-      } else {
-        counter.textContent = `${loadedCount.toLocaleString()} putters loaded • ${attemptedCount.toLocaleString()} checked`;
-      }
-    }
+  let shuffled = [];
+  let index = 0;
+  let loaded = 0;
+  let checked = 0;
+  let mode = 'random';
 
-    // Clear gallery
-    function clearGallery() {
-      gallery.innerHTML = '';
-      currentIndex = 0;
-      loadedCount = 0;
-      attemptedCount = 0;
+  function updateCounter() {
+    counter.textContent = `${loaded.toLocaleString()} loaded • ${checked.toLocaleString()} checked`;
+  }
+
+  function createCard(num) {
+    const coa = formatCOA(num);
+    const card = document.createElement('div');
+    card.className = 'putter-card';
+    card.onclick = () => window.open(getDetailsURL(coa),'_blank');
+
+    const img = document.createElement('img');
+    img.dataset.src = getImageURL(coa);
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.fetchPriority = 'low';
+
+    img.onload = () => {
+      img.classList.add('loaded');
+      loaded++;
       updateCounter();
-    }
+    };
 
-    // Switch to random mode
-    function switchToRandom() {
-      viewMode = 'random';
-      shuffledCOAs = generateShuffledCOAs();
-      randomBtn.classList.add('active');
-      sequentialBtn.classList.remove('active');
-      randomBtnMobile.classList.add('active');
-      sequentialBtnMobile.classList.remove('active');
-      loadingIndicator.style.display = 'block';
-      clearGallery();
-      loadMorePutters();
-    }
+    img.onerror = () => {
+      card.classList.add('error');
+      checked++;
+      updateCounter();
+    };
 
-    // Switch to sequential mode
-    function switchToSequential() {
-      viewMode = 'sequential';
-      allCOAs = [];
-      for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) {
-        allCOAs.push(i);
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton';
+
+    const badge = document.createElement('div');
+    badge.className = 'coa-badge';
+    badge.textContent = coa;
+
+    card.append(img, skeleton, badge);
+    return card;
+  }
+
+  const imageObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const img = e.target;
+        img.src = img.dataset.src;
+        imageObserver.unobserve(img);
       }
-      shuffledCOAs = allCOAs;
-      randomBtn.classList.remove('active');
-      sequentialBtn.classList.add('active');
-      randomBtnMobile.classList.remove('active');
-      sequentialBtnMobile.classList.add('active');
-      loadingIndicator.style.display = 'block';
-      clearGallery();
-      loadMorePutters();
-    }
-
-    // Search for specific COA
-    function searchForCOA(coaInput) {
-      // Clean input - remove spaces, convert to uppercase
-      let cleaned = coaInput.trim().toUpperCase();
-      
-      // Add 'A' prefix if missing
-      if (!cleaned.startsWith('A')) {
-        cleaned = 'A' + cleaned;
-      }
-      
-      // Pad with zeros if needed (e.g., A123 -> A000123)
-      const match = cleaned.match(/^A(\d+)$/);
-      if (match) {
-        const num = parseInt(match[1]);
-        if (num >= COA_RANGE.start && num <= COA_RANGE.end) {
-          searchCOA = formatCOA(num);
-          viewMode = 'search';
-          randomBtn.classList.remove('active');
-          sequentialBtn.classList.remove('active');
-          randomBtnMobile.classList.remove('active');
-          sequentialBtnMobile.classList.remove('active');
-          loadingIndicator.style.display = 'none';
-          clearGallery();
-          
-          // Show all image variants (a, b, c) for this COA
-          IMAGE_VARIANTS.forEach(variant => {
-            const card = createPutterCardWithVariant(num, variant);
-            gallery.appendChild(card);
-            const img = card.querySelector('img');
-            imageObserver.observe(img);
-          });
-          
-          updateCounter();
-          return true;
-        }
-      }
-      
-      // Invalid COA
-      alert('Please enter a valid COA number (A000001 - A074674)');
-      return false;
-    }
-
-    // Create putter card with specific variant
-    function createPutterCardWithVariant(coaNum, variant) {
-      const coaNumber = formatCOA(coaNum);
-      
-      const card = document.createElement('div');
-      card.className = 'putter-card';
-      card.onclick = () => window.open(getDetailsURL(coaNumber), '_blank');
-      
-      const img = document.createElement('img');
-      img.dataset.src = getImageURL(coaNumber, variant);
-      img.alt = `Scotty Cameron ${coaNumber} - ${variant.toUpperCase()}`;
-      
-      // Handle image load
-      img.onload = () => {
-        img.classList.add('loaded');
-        loadedCount++;
-        updateCounter();
-      };
-      
-      // Handle image error - just hide this variant
-      img.onerror = () => {
-        card.classList.add('error');
-        attemptedCount++;
-        updateCounter();
-      };
-      
-      const skeleton = document.createElement('div');
-      skeleton.className = 'skeleton';
-      
-      const badge = document.createElement('div');
-      badge.className = 'coa-badge';
-      badge.textContent = `${coaNumber} (${variant.toUpperCase()})`;
-      
-      card.appendChild(img);
-      card.appendChild(skeleton);
-      card.appendChild(badge);
-      
-      return card;
-    }
-
-    // Load batch of putters
-    function loadMorePutters() {
-      if (viewMode === 'search' || currentIndex >= shuffledCOAs.length) {
-        loadingIndicator.style.display = 'none';
-        return;
-      }
-
-      isLoading = true;
-      
-      const batch = shuffledCOAs.slice(currentIndex, currentIndex + BATCH_SIZE);
-      
-      batch.forEach(coaNum => {
-        const card = createPutterCard(coaNum);
-        gallery.appendChild(card);
-        
-        // Observe image for lazy loading
-        const img = card.querySelector('img');
-        imageObserver.observe(img);
-      });
-
-      currentIndex += BATCH_SIZE;
-      isLoading = false;
-    }
-
-    // Initialize
-    function init() {
-      // Generate initial random order
-      shuffledCOAs = generateShuffledCOAs();
-      
-      // Load initial batch
-      loadMorePutters();
-      
-      // Observe loading indicator for infinite scroll
-      scrollObserver.observe(loadingIndicator);
-      
-      // Preload a few more batches
-      setTimeout(() => {
-        if (currentIndex < shuffledCOAs.length) {
-          loadMorePutters();
-        }
-      }, 500);
-
-      // Event listeners
-      randomBtn.addEventListener('click', switchToRandom);
-      sequentialBtn.addEventListener('click', switchToSequential);
-      randomBtnMobile.addEventListener('click', switchToRandom);
-      sequentialBtnMobile.addEventListener('click', switchToSequential);
-      
-      searchToggleBtn.addEventListener('click', () => {
-        navCenter.classList.toggle('expanded');
-        if (navCenter.classList.contains('expanded')) {
-          coaSearch.focus();
-        }
-      });
-      
-      coaSearch.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          if (searchForCOA(coaSearch.value)) {
-            // Collapse search on mobile after successful search
-            navCenter.classList.remove('expanded');
-          }
-        }
-      });
-
-      coaSearch.addEventListener('input', (e) => {
-        // Auto-format as user types
-        let value = e.target.value.toUpperCase();
-        e.target.value = value;
-      });
-    }
-
-    // Start the gallery
-    init();
-
-    // Handle window resize for responsive grid
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        // Grid auto-adjusts via CSS, but this could trigger optimizations if needed
-      }, 250);
     });
-  </script>
+  }, { rootMargin: '50px' });
+
+  function loadMore() {
+    if (index >= shuffled.length) {
+      loadingIndicator.style.display = 'none';
+      return;
+    }
+
+    const batch = shuffled.slice(index, index + BATCH_SIZE);
+    batch.forEach(n => {
+      const card = createCard(n);
+      gallery.appendChild(card);
+      imageObserver.observe(card.querySelector('img'));
+      checked++;
+    });
+
+    index += BATCH_SIZE;
+    updateCounter();
+  }
+
+  function shuffleCOAs() {
+    const arr = [];
+    for (let i = COA_RANGE.start; i <= COA_RANGE.end; i++) arr.push(i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  shuffled = shuffleCOAs();
+  loadMore();
+
+  const scrollObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadMore();
+  }, { rootMargin: '400px' });
+
+  scrollObserver.observe(loadingIndicator);
+</script>
+
 </body>
 </html>
